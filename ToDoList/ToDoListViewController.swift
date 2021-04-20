@@ -14,7 +14,7 @@ class ToDoListViewController: UIViewController {
     }
     
     var collectionView: UICollectionView! = nil
-    var dataSource: UICollectionViewDiffableDataSource<Section, Int>! = nil
+    var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +40,7 @@ extension ToDoListViewController {
     }
     
     func configureDataSource() {
-        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Int>{ (cell, indexPath, item) in
+        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>{ (cell, indexPath, item) in
             var contentConfiguration = cell.defaultContentConfiguration()
             contentConfiguration.text = "\(item)"
             cell.contentConfiguration = contentConfiguration
@@ -49,16 +49,21 @@ extension ToDoListViewController {
             
         }
         
-        dataSource = UICollectionViewDiffableDataSource<Section, Int>(collectionView: collectionView) {
-            (collectionView: UICollectionView, indexPath: IndexPath, identifier: Int) -> UICollectionViewCell? in
+        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) {
+            (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
         
         dataSource.reorderingHandlers.canReorderItem = { item in return true }
         
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Int>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(Array(0...100))
+        
+        // MEMO: 構造体を使う時はインスタンスを作らないと参照できない
+        for category in ToDo.Category.allCases {
+            let items = category.todos.map { Item(title: $0.task)}
+            snapshot.appendItems(items)
+        }
         dataSource.apply(snapshot, animatingDifferences: false)
     }
 }
