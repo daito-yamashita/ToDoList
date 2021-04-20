@@ -20,6 +20,7 @@ struct ToDo: Hashable {
 extension ToDo.Category {
     var todos: [ToDo] {
         return [
+            ToDo(task: "task0"),
             ToDo(task: "task1"),
             ToDo(task: "task2"),
             ToDo(task: "task3"),
