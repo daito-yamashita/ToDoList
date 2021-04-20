@@ -3,6 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -11,7 +12,6 @@
         <!--Navigation Controller-->
         <scene sceneID="fCe-Ob-ak1">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="kGD-LQ-fU7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController id="p6c-4L-lrD" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="pyF-Sn-Vvp">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
@@ -21,6 +21,7 @@
                         <segue destination="5cj-jM-ceW" kind="relationship" relationship="rootViewController" id="D0q-Q2-19d"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="kGD-LQ-fU7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-988" y="-538"/>
         </scene>
@@ -52,17 +53,52 @@
                     </collectionView>
                     <navigationItem key="navigationItem" title="ToDo List" id="70P-8z-au3">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="line.horizontal.3" catalog="system" id="Hbo-xy-ggf"/>
-                        <barButtonItem key="rightBarButtonItem" image="plus" catalog="system" id="N7T-PJ-MC3"/>
+                        <barButtonItem key="rightBarButtonItem" image="plus" catalog="system" id="N7T-PJ-MC3">
+                            <connections>
+                                <segue destination="qFN-cw-0BT" kind="show" id="3TX-Ke-zHk"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XbI-t6-mfh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="0.0" y="-538.39285714285711"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="De1-X1-hAA">
+            <objects>
+                <viewController id="qFN-cw-0BT" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="AoS-Eh-FcI">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="タスクを入力" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pEh-Ul-1jM">
+                                <rect key="frame" x="20" y="88" width="374" height="774"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="hai-CY-Nf5"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="f0L-Z0-7NK">
+                        <barButtonItem key="rightBarButtonItem" title="保存" id="BSb-vB-QrA"/>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IXB-jM-4cq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="960.86956521739137" y="-538.39285714285711"/>
+        </scene>
     </scenes>
     <resources>
         <image name="line.horizontal.3" catalog="system" width="128" height="64"/>
         <image name="plus" catalog="system" width="128" height="113"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
