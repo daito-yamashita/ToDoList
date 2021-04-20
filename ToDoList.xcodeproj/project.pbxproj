@@ -14,6 +14,8 @@
 		71D5D2CA262D01010036DF3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71D5D2C9262D01010036DF3B /* Assets.xcassets */; };
 		71D5D2CD262D01010036DF3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71D5D2CB262D01010036DF3B /* LaunchScreen.storyboard */; };
 		71D5D2D6262D199A0036DF3B /* SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D5D2D5262D199A0036DF3B /* SampleData.swift */; };
+		71D5D2DC262D5F460036DF3B /* AddToDoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D5D2DB262D5F460036DF3B /* AddToDoViewController.swift */; };
+		71D5D2DF262D5FBD0036DF3B /* AddToDoViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71D5D2DE262D5FBD0036DF3B /* AddToDoViewController.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		71D5D2CC262D01010036DF3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		71D5D2CE262D01010036DF3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		71D5D2D5262D199A0036DF3B /* SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleData.swift; sourceTree = "<group>"; };
+		71D5D2DB262D5F460036DF3B /* AddToDoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToDoViewController.swift; sourceTree = "<group>"; };
+		71D5D2DE262D5FBD0036DF3B /* AddToDoViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AddToDoViewController.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +46,11 @@
 		71D5D2B4262D01010036DF3B = {
 			isa = PBXGroup;
 			children = (
+				71D5D2C0262D01010036DF3B /* AppDelegate.swift */,
+				71D5D2C2262D01010036DF3B /* SceneDelegate.swift */,
+				71D5D2C9262D01010036DF3B /* Assets.xcassets */,
+				71D5D2CB262D01010036DF3B /* LaunchScreen.storyboard */,
+				71D5D2E1262D5FC90036DF3B /* AddToDoViewController */,
 				71D5D2D8262D4BE50036DF3B /* SampleData */,
 				71D5D2BF262D01010036DF3B /* ToDoList */,
 				71D5D2BE262D01010036DF3B /* Products */,
@@ -59,13 +68,9 @@
 		71D5D2BF262D01010036DF3B /* ToDoList */ = {
 			isa = PBXGroup;
 			children = (
-				71D5D2C0262D01010036DF3B /* AppDelegate.swift */,
-				71D5D2C2262D01010036DF3B /* SceneDelegate.swift */,
+				71D5D2CE262D01010036DF3B /* Info.plist */,
 				71D5D2C4262D01010036DF3B /* ToDoListViewController.swift */,
 				71D5D2C6262D01010036DF3B /* Main.storyboard */,
-				71D5D2C9262D01010036DF3B /* Assets.xcassets */,
-				71D5D2CB262D01010036DF3B /* LaunchScreen.storyboard */,
-				71D5D2CE262D01010036DF3B /* Info.plist */,
 			);
 			path = ToDoList;
 			sourceTree = "<group>";
@@ -76,6 +81,15 @@
 				71D5D2D5262D199A0036DF3B /* SampleData.swift */,
 			);
 			path = SampleData;
+			sourceTree = "<group>";
+		};
+		71D5D2E1262D5FC90036DF3B /* AddToDoViewController */ = {
+			isa = PBXGroup;
+			children = (
+				71D5D2DE262D5FBD0036DF3B /* AddToDoViewController.storyboard */,
+				71D5D2DB262D5F460036DF3B /* AddToDoViewController.swift */,
+			);
+			name = AddToDoViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,6 +151,7 @@
 			files = (
 				71D5D2CD262D01010036DF3B /* LaunchScreen.storyboard in Resources */,
 				71D5D2CA262D01010036DF3B /* Assets.xcassets in Resources */,
+				71D5D2DF262D5FBD0036DF3B /* AddToDoViewController.storyboard in Resources */,
 				71D5D2C8262D01010036DF3B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -150,6 +165,7 @@
 			files = (
 				71D5D2C5262D01010036DF3B /* ToDoListViewController.swift in Sources */,
 				71D5D2C1262D01010036DF3B /* AppDelegate.swift in Sources */,
+				71D5D2DC262D5F460036DF3B /* AddToDoViewController.swift in Sources */,
 				71D5D2C3262D01010036DF3B /* SceneDelegate.swift in Sources */,
 				71D5D2D6262D199A0036DF3B /* SampleData.swift in Sources */,
 			);

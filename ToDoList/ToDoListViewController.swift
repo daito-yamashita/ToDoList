@@ -13,20 +13,8 @@ class ToDoListViewController: UIViewController {
         case main
     }
     
-    struct Item: Hashable {
-        let title: String
-        init(title: String) {
-            self.title = title
-        }
-        private let identifier = UUID()
-    }
-    
-    let aaa = Item(title: "aaa")
-    let bbb = Item(title: "bbb")
-    let ccc = Item(title: "ccc")
-    
-    var collectionView: UICollectionView!
-    var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+    var collectionView: UICollectionView! = nil
+    var dataSource: UICollectionViewDiffableDataSource<Section, Int>! = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +30,7 @@ extension ToDoListViewController {
     func configureHierarchy() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        collectionView.backgroundColor = .red
+        collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
     }
     
@@ -52,24 +40,25 @@ extension ToDoListViewController {
     }
     
     func configureDataSource() {
-        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>{ (cell, indexPath, item) in
-            var contentConfiguration = UIListContentConfiguration.valueCell()
-            contentConfiguration.text = item.title
+        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Int>{ (cell, indexPath, item) in
+            var contentConfiguration = cell.defaultContentConfiguration()
+            contentConfiguration.text = "\(item)"
             cell.contentConfiguration = contentConfiguration
             
-            cell.accessories = [.disclosureIndicator(), .reorder(displayed: .always)]
-            cell.accessories = [.disclosureIndicator(), .checkmark(displayed: .always)]
+            cell.accessories = [.multiselect(displayed: .always), .reorder(), .delete()]
+//            cell.accessories = [.reorder()]
+            
         }
         
-        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) {
-            (collectionView, indexPath, item) -> UICollectionViewCell? in
-            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item.title)
+        dataSource = UICollectionViewDiffableDataSource<Section, Int>(collectionView: collectionView) {
+            (collectionView: UICollectionView, indexPath: IndexPath, identifier: Int) -> UICollectionViewCell? in
+            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
         
-        dataSource.reorderingHandlers.canReorderItem = { item in return true }
-        dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
-            guard let self = self else { return }
-        }
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Int>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(Array(0...100))
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
 }
 
