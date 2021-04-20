@@ -42,7 +42,7 @@ extension ToDoListViewController {
     func configureDataSource() {
         let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>{ (cell, indexPath, item) in
             var contentConfiguration = cell.defaultContentConfiguration()
-            contentConfiguration.text = "\(item)"
+            contentConfiguration.text = "\(item.title)"
             cell.contentConfiguration = contentConfiguration
             
             cell.accessories = [.multiselect(displayed: .always), .reorder(), .delete()]
