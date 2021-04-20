@@ -46,7 +46,6 @@ extension ToDoListViewController {
             cell.contentConfiguration = contentConfiguration
             
             cell.accessories = [.multiselect(displayed: .always), .reorder(), .delete()]
-//            cell.accessories = [.reorder()]
             
         }
         
@@ -54,6 +53,8 @@ extension ToDoListViewController {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Int) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
+        
+        dataSource.reorderingHandlers.canReorderItem = { item in return true }
         
         var snapshot = NSDiffableDataSourceSnapshot<Section, Int>()
         snapshot.appendSections([.main])

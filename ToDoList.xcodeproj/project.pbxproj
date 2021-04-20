@@ -50,6 +50,8 @@
 				71D5D2C2262D01010036DF3B /* SceneDelegate.swift */,
 				71D5D2C9262D01010036DF3B /* Assets.xcassets */,
 				71D5D2CB262D01010036DF3B /* LaunchScreen.storyboard */,
+				71D5D2C6262D01010036DF3B /* Main.storyboard */,
+				71D5D2CE262D01010036DF3B /* Info.plist */,
 				71D5D2E1262D5FC90036DF3B /* AddToDoViewController */,
 				71D5D2D8262D4BE50036DF3B /* SampleData */,
 				71D5D2BF262D01010036DF3B /* ToDoList */,
@@ -68,9 +70,7 @@
 		71D5D2BF262D01010036DF3B /* ToDoList */ = {
 			isa = PBXGroup;
 			children = (
-				71D5D2CE262D01010036DF3B /* Info.plist */,
 				71D5D2C4262D01010036DF3B /* ToDoListViewController.swift */,
-				71D5D2C6262D01010036DF3B /* Main.storyboard */,
 			);
 			path = ToDoList;
 			sourceTree = "<group>";
@@ -316,7 +316,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PTUKDUTHP4;
-				INFOPLIST_FILE = ToDoList/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -335,7 +335,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PTUKDUTHP4;
-				INFOPLIST_FILE = ToDoList/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
