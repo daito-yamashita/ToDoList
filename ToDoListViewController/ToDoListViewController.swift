@@ -44,7 +44,7 @@ extension ToDoListViewController {
     }
     
     func createLayout() -> UICollectionViewLayout {
-        let configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+        let configuration = UICollectionLayoutListConfiguration(appearance: .sidebar)
         return UICollectionViewCompositionalLayout.list(using: configuration)
     }
     
