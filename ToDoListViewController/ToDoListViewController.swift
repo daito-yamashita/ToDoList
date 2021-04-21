@@ -13,6 +13,10 @@ class ToDoListViewController: UIViewController {
         case main
     }
     
+    var todos = [ToDo]()
+
+    let userDefault = UserDefaults.standard
+    
     var collectionView: UICollectionView! = nil
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
     
@@ -69,10 +73,17 @@ extension ToDoListViewController {
 }
 
 extension ToDoListViewController {
+    @IBAction func unwindToToDoView(sender: UIStoryboardSegue) {
+        if let ToDoViewController = sender.source as? ToDoViewController,
+           let todo = ToDoViewController.todo {
+            todos.append(todo)
+        }
+    }
+}
+
+extension ToDoListViewController {
     func saveToDoTask() {
-        let todoTask = textView.text
-        
-        userDefault.set(todoTask, forKey: "todoTask")
+        userDefault.set(todos, forKey: "todoTask")
         userDefault.synchronize()
     }
     

@@ -85,7 +85,11 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="f0L-Z0-7NK">
-                        <barButtonItem key="rightBarButtonItem" title="save" id="SkL-hr-jjp"/>
+                        <barButtonItem key="rightBarButtonItem" title="save" id="SkL-hr-jjp">
+                            <connections>
+                                <segue destination="3Xn-4j-nYw" kind="unwind" unwindAction="unwindToToDoViewWithSender:" id="AlS-Io-Tlb"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="saveButton" destination="SkL-hr-jjp" id="PF2-JL-FFB"/>
@@ -93,6 +97,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IXB-jM-4cq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="3Xn-4j-nYw" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="960.86956521739137" y="-538.39285714285711"/>
         </scene>

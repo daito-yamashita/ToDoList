@@ -14,8 +14,6 @@ class ToDoViewController: UIViewController {
     
     var todo: ToDo?
     
-    let userDefault = UserDefaults.standard
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         UpdateSaveButtonState()
