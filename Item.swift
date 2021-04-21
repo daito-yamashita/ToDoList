@@ -18,6 +18,7 @@ struct Item: Hashable {
     }
 }
 
+// Mark: 自作の型をUserDefalutに保存する時、Codableに準拠している必要がある
 extension Item: Codable {
     enum CodingKeys: CodingKey {
         case todo

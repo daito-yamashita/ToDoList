@@ -109,3 +109,20 @@ extension ToDoListViewController {
     }
 }
 
+extension UserDefaults {
+    func getItem(_ forkey: String) -> [Item]? {
+        guard let data = self.object(forKey: forkey) as? Data else {
+            return nil
+        }
+        guard let item = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? [Item] else {
+            return nil
+        }
+        return item
+    }
+    
+    func setItem(_ items: [Item], forkey: String) {
+        let data = try! NSKeyedArchiver.archivedData(withRootObject: items, requiringSecureCoding: false)
+        self.set(data, forKey: forkey)
+    }
+}
+

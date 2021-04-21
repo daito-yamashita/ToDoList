@@ -37,6 +37,7 @@ extension ToDo.Category {
     }
 }
 
+// Mark: 自作の型をUserDefalutに保存する時、Codableに準拠している必要がある
 extension ToDo: Codable {
     enum CodingKeys: CodingKey {
         case task
