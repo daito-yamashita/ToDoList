@@ -68,11 +68,6 @@ extension ToDoListViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
         
-//        // MEMO: 構造体を使う時はインスタンスを作らないと参照できない
-//        for category in ToDo.Category.allCases {
-//            let items = category.todos.map { Item(title: $0.task)}
-//            snapshot.appendItems(items)
-//        }
         snapshot.appendItems(items)
         dataSource.apply(snapshot, animatingDifferences: false)
     }
@@ -84,25 +79,22 @@ extension ToDoListViewController {
            let item = ToDoViewController.item {
             items.append(item)
             saveToDoTask()
+            configureDataSource()
         }
     }
 }
 
 extension ToDoListViewController {
     func saveToDoTask() {
-        userDefault.set(items, forKey: "todoTask")
-        userDefault.synchronize()
+        userDefault.saveItems(items, forkey: "todoTask")
     }
     
     func loadToDoTask() -> [Item]? {
-        let value = userDefault.object(forKey: "todoTask")
-        guard let itemss = value as? [Item] else {
-            return nil
-        }
-        return itemss
+        userDefault.loadItems("todoTask")
     }
     
     func loadSampleToDoTask() {
+        // MARK: 構造体を使う時はインスタンスを作らないと参照できない
         for category in ToDo.Category.allCases {
             items = category.todos.map { Item(title: $0.task)}
         }
@@ -110,19 +102,21 @@ extension ToDoListViewController {
 }
 
 extension UserDefaults {
-    func getItem(_ forkey: String) -> [Item]? {
-        guard let data = self.object(forKey: forkey) as? Data else {
-            return nil
-        }
-        guard let item = try! NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? [Item] else {
-            return nil
-        }
-        return item
+    func saveItems(_ saveItems: [Item], forkey: String) {
+        let data = try? NSKeyedArchiver.archivedData(withRootObject: saveItems, requiringSecureCoding: false)
+        UserDefaults.standard.set(data, forKey: forkey)
     }
     
-    func setItem(_ items: [Item], forkey: String) {
-        let data = try! NSKeyedArchiver.archivedData(withRootObject: items, requiringSecureCoding: false)
-        self.set(data, forKey: forkey)
+    func loadItems(_ forkey: String) -> [Item]? {
+        guard let loadData = UserDefaults.standard.object(forKey: forkey) as? Data else {
+            return nil
+        }
+        guard let loadItems = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(loadData) as? [Item] else {
+            return nil
+        }
+        return loadItems
     }
+    
+
 }
 
