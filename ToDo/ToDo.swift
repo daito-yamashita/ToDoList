@@ -12,7 +12,7 @@ struct ToDo: Hashable {
         case sample
     }
     let task: String
-    var identifier = UUID()
+    let identifier = UUID()
     
     init(task: String) {
         self.task = task
@@ -55,7 +55,7 @@ extension ToDo: Codable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         task = try container.decode(String.self, forKey: .task)
-        identifier = try container.decode(UUID.self, forKey: .identifier)
+//        identifier = try container.decode(UUID.self, forKey: .identifier)
     }
     
     func encode(to encoder: Encoder) throws {

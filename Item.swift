@@ -10,7 +10,7 @@ import UIKit
 struct Item: Hashable {
     let todo: ToDo?
     let title: String
-    var identifier = UUID()
+    let identifier = UUID()
     
     init(todo: ToDo? = nil, title: String) {
         self.todo = todo
@@ -38,7 +38,7 @@ extension Item: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         todo = (try? container.decode(ToDo.self, forKey: .todo)) ?? nil
         title = try container.decode(String.self, forKey: .title)
-        identifier = try container.decode(UUID.self, forKey: .identifier)
+//        identifier = try container.decode(UUID.self, forKey: .identifier)
     }
     
     func encode(to encoder: Encoder) throws {

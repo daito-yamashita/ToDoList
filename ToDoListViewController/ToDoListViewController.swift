@@ -58,7 +58,7 @@ extension ToDoListViewController {
         }
         
         if let savedToDoTasks = loadToDoTask() {
-            items += savedToDoTasks
+            items = savedToDoTasks
         } else {
             loadSampleToDoTask()
         }
@@ -127,21 +127,21 @@ extension ToDoListViewController {
     }
 }
 
-extension UserDefaults {
-    func saveItems(_ saveItems: [Item], forKey: String) {
-        let data = try? NSKeyedArchiver.archivedData(withRootObject: saveItems, requiringSecureCoding: false)
-        UserDefaults.standard.set(data, forKey: forKey)
-        UserDefaults.standard.synchronize()
-    }
-
-    func loadItems(_ forKey: String) -> [Item]? {
-        guard let loadData = UserDefaults.standard.data(forKey: forKey) else {
-            return nil
-        }
-        guard let loadItems = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(loadData) as? [Item] else {
-            return nil
-        }
-        return loadItems
-    }
-}
+//extension UserDefaults {
+//    func saveItems(_ saveItems: [Item], forKey: String) {
+//        let data = try? NSKeyedArchiver.archivedData(withRootObject: saveItems, requiringSecureCoding: false)
+//        UserDefaults.standard.set(data, forKey: forKey)
+//        UserDefaults.standard.synchronize()
+//    }
+//
+//    func loadItems(_ forKey: String) -> [Item]? {
+//        guard let loadData = UserDefaults.standard.data(forKey: forKey) else {
+//            return nil
+//        }
+//        guard let loadItems = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(loadData) as? [Item] else {
+//            return nil
+//        }
+//        return loadItems
+//    }
+//}
 
