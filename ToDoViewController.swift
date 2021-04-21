@@ -8,21 +8,29 @@
 import UIKit
 
 class ToDoViewController: UIViewController {
-    
+
     @IBOutlet weak var textView: UITextView!
+    @IBOutlet weak var saveButton: UIBarButtonItem!
+    
+    var todo: ToDo?
     
     let userDefault = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        UpdateSaveButtonState()
     }
     
-    @IBAction func saveToDoTask(_ sender: Any) {
-        let todoTask = textView.text
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
         
-        userDefault.set(todoTask, forKey: "todoTask")
-        userDefault.synchronize()
+        let task = textView.text ?? ""
+        todo = ToDo(task: task)
     }
 
+    func UpdateSaveButtonState() {
+        let task = textView.text ?? ""
+        saveButton.isEnabled = !task.isEmpty
+    }
+    
 }

@@ -1,20 +1,18 @@
 //
-//  ToDoListCell.swift
+//  ToDo.swift
 //  ToDoList
 //
-//  Created by daito yamashita on 2021/04/19.
+//  Created by daito yamashita on 2021/04/21.
 //
 
 import UIKit
 
 struct ToDo: Hashable {
     enum Category: Int, CaseIterable {
-        case main
+        case sample
     }
     let task: String
     let identifier = UUID()
-    
-
 }
 
 extension ToDo.Category {
@@ -34,4 +32,3 @@ extension ToDo.Category {
         ]
     }
 }
-

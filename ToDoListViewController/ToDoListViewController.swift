@@ -68,3 +68,24 @@ extension ToDoListViewController {
     }
 }
 
+extension ToDoListViewController {
+    func saveToDoTask() {
+        let todoTask = textView.text
+        
+        userDefault.set(todoTask, forKey: "todoTask")
+        userDefault.synchronize()
+    }
+    
+    func loadToDoTask() -> [ToDo]? {
+        let value = userDefault.object(forKey: "todoTask")
+        guard let todos = value as? [ToDo] else {
+            return nil
+        }
+        return todos
+    }
+    
+    func loadSampleToDoTask() {
+        
+    }
+}
+
