@@ -12,7 +12,7 @@ class ToDoViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
-    var todo: ToDo?
+    var item: Item?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,7 @@ class ToDoViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
         
         let task = textView.text ?? ""
-        todo = ToDo(task: task)
+        item = Item(title: task)
     }
 
     func UpdateSaveButtonState() {

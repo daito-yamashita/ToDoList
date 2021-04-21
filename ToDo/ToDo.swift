@@ -12,7 +12,11 @@ struct ToDo: Hashable {
         case sample
     }
     let task: String
-    let identifier = UUID()
+    var identifier = UUID()
+    
+    init(task: String) {
+        self.task = task
+    }
 }
 
 extension ToDo.Category {
@@ -30,5 +34,24 @@ extension ToDo.Category {
             ToDo(task: "task9"),
             ToDo(task: "task10")
         ]
+    }
+}
+
+extension ToDo: Codable {
+    enum CodingKeys: CodingKey {
+        case task
+        case identifier
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        task = try container.decode(String.self, forKey: .task)
+        identifier = try container.decode(UUID.self, forKey: .identifier)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(task, forKey: .task)
+        try container.encode(identifier, forKey: .identifier)
     }
 }
