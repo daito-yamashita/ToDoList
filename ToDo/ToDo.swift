@@ -17,6 +17,14 @@ struct ToDo: Hashable {
     init(task: String) {
         self.task = task
     }
+    
+    static func ==(lhs: ToDo, rhs: ToDo) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
+    }
 }
 
 extension ToDo.Category {

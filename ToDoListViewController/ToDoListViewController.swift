@@ -23,12 +23,6 @@ class ToDoListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let savedToDoTasks = loadToDoTask() {
-            items += savedToDoTasks
-        } else {
-            loadSampleToDoTask()
-        }
-        
         configureHierarchy()
         configureDataSource()
     }
@@ -63,7 +57,11 @@ extension ToDoListViewController {
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
         
-        dataSource.reorderingHandlers.canReorderItem = { item in return true }
+        if let savedToDoTasks = loadToDoTask() {
+            items += savedToDoTasks
+        } else {
+            loadSampleToDoTask()
+        }
         
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
@@ -84,15 +82,43 @@ extension ToDoListViewController {
     }
 }
 
+//extension ToDoListViewController {
+//    func saveToDoTask() {
+//        userDefault.saveItems(items, forkey: "todoTask")
+//    }
+//
+//    func loadToDoTask() -> [Item]? {
+//        return userDefault.loadItems("todoTask")
+//    }
+//
+//    func loadSampleToDoTask() {
+//        // MARK: 構造体を使う時はインスタンスを作らないと参照できない
+//        for category in ToDo.Category.allCases {
+//            items = category.todos.map { Item(title: $0.task)}
+//        }
+//    }
+//}
+
 extension ToDoListViewController {
     func saveToDoTask() {
-        userDefault.saveItems(items, forkey: "todoTask")
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.keyEncodingStrategy = .convertToSnakeCase
+        guard let data = try? jsonEncoder.encode(items) else {
+            return
+        }
+        userDefault.set(data, forKey: "todoTask")
     }
-    
+
     func loadToDoTask() -> [Item]? {
-        userDefault.loadItems("todoTask")
+        let jsonDecoder = JSONDecoder()
+        jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+        guard let data = userDefault.data(forKey: "todoTask"),
+              let items = try? jsonDecoder.decode([Item].self, from: data) else {
+            return nil
+        }
+        return items
     }
-    
+
     func loadSampleToDoTask() {
         // MARK: 構造体を使う時はインスタンスを作らないと参照できない
         for category in ToDo.Category.allCases {
@@ -102,13 +128,14 @@ extension ToDoListViewController {
 }
 
 extension UserDefaults {
-    func saveItems(_ saveItems: [Item], forkey: String) {
+    func saveItems(_ saveItems: [Item], forKey: String) {
         let data = try? NSKeyedArchiver.archivedData(withRootObject: saveItems, requiringSecureCoding: false)
-        UserDefaults.standard.set(data, forKey: forkey)
+        UserDefaults.standard.set(data, forKey: forKey)
+        UserDefaults.standard.synchronize()
     }
-    
-    func loadItems(_ forkey: String) -> [Item]? {
-        guard let loadData = UserDefaults.standard.object(forKey: forkey) as? Data else {
+
+    func loadItems(_ forKey: String) -> [Item]? {
+        guard let loadData = UserDefaults.standard.data(forKey: forKey) else {
             return nil
         }
         guard let loadItems = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(loadData) as? [Item] else {
@@ -116,7 +143,5 @@ extension UserDefaults {
         }
         return loadItems
     }
-    
-
 }
 
