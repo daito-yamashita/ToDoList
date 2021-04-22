@@ -24,8 +24,18 @@ class ToDoListViewController: UIViewController, UICollectionViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
+        self.navigationItem.leftBarButtonItem?.primaryAction = UIAction(title: "編集") { _ in
+            self.setEditing(!self.isEditing, animated: true)
+        }
+        
         configureHierarchy()
         configureDataSource()
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        self.collectionView.isEditing = editing
     }
 }
 
@@ -50,7 +60,7 @@ extension ToDoListViewController {
             contentConfiguration.text = "\(item.title)"
             cell.contentConfiguration = contentConfiguration
             
-            cell.accessories = [.multiselect(displayed: .whenNotEditing), .delete(displayed: .always), .reorder(displayed: .always)]
+            cell.accessories = [.multiselect(displayed: .whenNotEditing), .delete(), .reorder()]
             
         }
         

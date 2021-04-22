@@ -52,7 +52,6 @@
                         </cells>
                     </collectionView>
                     <navigationItem key="navigationItem" title="ToDo List" id="70P-8z-au3">
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="line.horizontal.3" catalog="system" id="Hbo-xy-ggf"/>
                         <barButtonItem key="rightBarButtonItem" image="plus" catalog="system" id="N7T-PJ-MC3">
                             <connections>
                                 <segue destination="qFN-cw-0BT" kind="show" id="3TX-Ke-zHk"/>
@@ -103,7 +102,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="line.horizontal.3" catalog="system" width="128" height="64"/>
         <image name="plus" catalog="system" width="128" height="113"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
