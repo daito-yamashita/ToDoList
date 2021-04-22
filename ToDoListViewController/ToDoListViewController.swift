@@ -69,6 +69,7 @@ extension ToDoListViewController {
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
         
+        dataSource.reorderingHandlers.canReorderItem = { item in return true }
         
         if let savedToDoTasks = loadToDoTask() {
             items = savedToDoTasks
