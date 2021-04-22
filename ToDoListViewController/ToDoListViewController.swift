@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ToDoListViewController: UIViewController {
+class ToDoListViewController: UIViewController, UICollectionViewDelegate {
 
     enum Section {
         case main
@@ -19,6 +19,7 @@ class ToDoListViewController: UIViewController {
     
     var collectionView: UICollectionView! = nil
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
+    var backingStore: [Section: [Item]] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +36,7 @@ extension ToDoListViewController {
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
+        collectionView.delegate = self
     }
     
     func createLayout() -> UICollectionViewLayout {
@@ -48,7 +50,7 @@ extension ToDoListViewController {
             contentConfiguration.text = "\(item.title)"
             cell.contentConfiguration = contentConfiguration
             
-            cell.accessories = [.multiselect(displayed: .always), .reorder(), .delete()]
+            cell.accessories = [.multiselect(displayed: .whenNotEditing), .delete(displayed: .always), .reorder(displayed: .always)]
             
         }
         
@@ -56,6 +58,7 @@ extension ToDoListViewController {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
+        
         
         if let savedToDoTasks = loadToDoTask() {
             items = savedToDoTasks
@@ -81,23 +84,6 @@ extension ToDoListViewController {
         }
     }
 }
-
-//extension ToDoListViewController {
-//    func saveToDoTask() {
-//        userDefault.saveItems(items, forkey: "todoTask")
-//    }
-//
-//    func loadToDoTask() -> [Item]? {
-//        return userDefault.loadItems("todoTask")
-//    }
-//
-//    func loadSampleToDoTask() {
-//        // MARK: 構造体を使う時はインスタンスを作らないと参照できない
-//        for category in ToDo.Category.allCases {
-//            items = category.todos.map { Item(title: $0.task)}
-//        }
-//    }
-//}
 
 extension ToDoListViewController {
     func saveToDoTask() {
@@ -127,21 +113,8 @@ extension ToDoListViewController {
     }
 }
 
-//extension UserDefaults {
-//    func saveItems(_ saveItems: [Item], forKey: String) {
-//        let data = try? NSKeyedArchiver.archivedData(withRootObject: saveItems, requiringSecureCoding: false)
-//        UserDefaults.standard.set(data, forKey: forKey)
-//        UserDefaults.standard.synchronize()
-//    }
-//
-//    func loadItems(_ forKey: String) -> [Item]? {
-//        guard let loadData = UserDefaults.standard.data(forKey: forKey) else {
-//            return nil
-//        }
-//        guard let loadItems = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(loadData) as? [Item] else {
-//            return nil
-//        }
-//        return loadItems
+//extension ToDoListViewController: UICollectionViewDelegate {
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        <#code#>
 //    }
 //}
-
