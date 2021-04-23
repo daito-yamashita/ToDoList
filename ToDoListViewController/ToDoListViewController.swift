@@ -9,9 +9,7 @@ import UIKit
 
 class ToDoListViewController: UIViewController, UICollectionViewDelegate {
 
-    enum Section {
-        case main
-    }
+    typealias Section = ToDo.Category
     
     var items = [Item]()
 
@@ -19,18 +17,13 @@ class ToDoListViewController: UIViewController, UICollectionViewDelegate {
     
     var collectionView: UICollectionView! = nil
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
-//    var backingStore: [Section: [Item]] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        self.navigationItem.leftBarButtonItem = self.editButtonItem
-//        self.navigationItem.leftBarButtonItem?.primaryAction = UIAction(title: "編集") { _ in
-//            self.setEditing(!self.isEditing, animated: true)
-//        }
-        
         configureHierarchy()
         configureDataSource()
+        applyInitialSnapshots()
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -46,7 +39,6 @@ extension ToDoListViewController {
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
-//        collectionView.delegate = self
     }
     
     func createLayout() -> UICollectionViewLayout {
@@ -69,25 +61,34 @@ extension ToDoListViewController {
             
             completion(true)
             
-            var snapShot = self.dataSource.snapshot()
-            snapShot.deleteItems([item])
-            self.dataSource.apply(snapShot)
+            var snapshot = self.dataSource.snapshot()
+            snapshot.deleteItems([item])
+            self.items = snapshot.itemIdentifiers
+            self.dataSource.apply(snapshot)
         }
         
         let deleteAction = UIContextualAction(style: .normal, title: "Delete", handler: actionHandler)
         deleteAction.image = UIImage(systemName: "trash")
         deleteAction.backgroundColor = .red
         
+        saveToDoTask()
+        
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
     
     func configureDataSource() {
+        if let savedToDoTasks = loadToDoTask() {
+            items = savedToDoTasks
+        } else {
+            loadSampleToDoTask()
+        }
+        
         let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>{ (cell, indexPath, item) in
             var contentConfiguration = cell.defaultContentConfiguration()
             contentConfiguration.text = "\(item.title)"
             cell.contentConfiguration = contentConfiguration
             
-            cell.accessories = [.multiselect(displayed: .whenNotEditing), .reorder(displayed: .whenNotEditing)]
+            cell.accessories = [.multiselect(displayed: .whenNotEditing)]
             
         }
         
@@ -95,23 +96,19 @@ extension ToDoListViewController {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
-        
-        if let savedToDoTasks = loadToDoTask() {
-            items = savedToDoTasks
-        } else {
-            loadSampleToDoTask()
-        }
-        
-        // MARK: 並び替え処理
-        dataSource.reorderingHandlers.canReorderItem = { item in return true }
-//        //こっちだとエラー出る
-//        dataSource.reorderingHandlers.canReorderItem = true
-        
+    }
+    
+    func applyInitialSnapshots() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.main])
+        snapshot.appendSections(ToDo.Category.allCases)
         
         snapshot.appendItems(items)
+        
         dataSource.apply(snapshot, animatingDifferences: false)
+    }
+    
+    func updateDataSouce(for item: Item) {
+        
     }
 }
 
@@ -121,7 +118,7 @@ extension ToDoListViewController {
            let item = ToDoViewController.item {
             items.append(item)
             saveToDoTask()
-            configureDataSource()
+            applyInitialSnapshots()
         }
     }
 }
@@ -153,9 +150,3 @@ extension ToDoListViewController {
         }
     }
 }
-
-//extension ToDoListViewController: UICollectionViewDelegate {
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        <#code#>
-//    }
-//}
