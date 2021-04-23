@@ -19,15 +19,15 @@ class ToDoListViewController: UIViewController, UICollectionViewDelegate {
     
     var collectionView: UICollectionView! = nil
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
-    var backingStore: [Section: [Item]] = [:]
+//    var backingStore: [Section: [Item]] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationItem.leftBarButtonItem = self.editButtonItem
-        self.navigationItem.leftBarButtonItem?.primaryAction = UIAction(title: "編集") { _ in
-            self.setEditing(!self.isEditing, animated: true)
-        }
+//        self.navigationItem.leftBarButtonItem = self.editButtonItem
+//        self.navigationItem.leftBarButtonItem?.primaryAction = UIAction(title: "編集") { _ in
+//            self.setEditing(!self.isEditing, animated: true)
+//        }
         
         configureHierarchy()
         configureDataSource()
@@ -46,12 +46,39 @@ extension ToDoListViewController {
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
-        collectionView.delegate = self
+//        collectionView.delegate = self
     }
     
     func createLayout() -> UICollectionViewLayout {
-        let configuration = UICollectionLayoutListConfiguration(appearance: .sidebar)
+        var configuration = UICollectionLayoutListConfiguration(appearance: .sidebar)
+        
+        // MARK: Cell削除のSwipeActionをTrailingに追加
+        configuration.trailingSwipeActionsConfigurationProvider = { [weak self ] indexPath in
+            guard let self = self else { return nil }
+            let selectedItem = self.dataSource.itemIdentifier(for: indexPath)
+            return self.deleteItemOnSwipe(item: selectedItem!)
+        }
+        
+        
         return UICollectionViewCompositionalLayout.list(using: configuration)
+    }
+    
+    // MARK: スワイプでセルを削除する関数
+    private func deleteItemOnSwipe(item: Item) -> UISwipeActionsConfiguration? {
+        let actionHandler: UIContextualAction.Handler = { action, view, completion in
+            
+            completion(true)
+            
+            var snapShot = self.dataSource.snapshot()
+            snapShot.deleteItems([item])
+            self.dataSource.apply(snapShot)
+        }
+        
+        let deleteAction = UIContextualAction(style: .normal, title: "Delete", handler: actionHandler)
+        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.backgroundColor = .red
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
     
     func configureDataSource() {
@@ -60,7 +87,7 @@ extension ToDoListViewController {
             contentConfiguration.text = "\(item.title)"
             cell.contentConfiguration = contentConfiguration
             
-            cell.accessories = [.multiselect(displayed: .whenNotEditing), .delete(), .reorder()]
+            cell.accessories = [.multiselect(displayed: .whenNotEditing), .reorder(displayed: .whenNotEditing)]
             
         }
         
@@ -69,13 +96,16 @@ extension ToDoListViewController {
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
         
-        dataSource.reorderingHandlers.canReorderItem = { item in return true }
-        
         if let savedToDoTasks = loadToDoTask() {
             items = savedToDoTasks
         } else {
             loadSampleToDoTask()
         }
+        
+        // MARK: 並び替え処理
+        dataSource.reorderingHandlers.canReorderItem = { item in return true }
+//        //こっちだとエラー出る
+//        dataSource.reorderingHandlers.canReorderItem = true
         
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
