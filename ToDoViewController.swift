@@ -14,8 +14,6 @@ class ToDoViewController: UIViewController {
     
     var todo: ToDo?
     
-    let userDefault = UserDefaults.standard
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         UpdateSaveButtonState()
@@ -25,7 +23,7 @@ class ToDoViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
         
         let task = textView.text ?? ""
-        todo = ToDo(task: task)
+        todo = ToDo(task: task, category: .none)
     }
 
     func UpdateSaveButtonState() {

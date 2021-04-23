@@ -7,11 +7,16 @@
 
 import UIKit
 
-class ToDoListViewController: UIViewController {
+class ToDoListViewController: UIViewController, UICollectionViewDelegate {
 
-    enum Section {
-        case main
+    enum Section: Int, CaseIterable, Hashable {
+        case list1, list2
     }
+    
+    var items = [Item]()
+    var todos = [ToDo]()
+
+    let userDefault = UserDefaults.standard
     
     var collectionView: UICollectionView! = nil
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
@@ -21,8 +26,13 @@ class ToDoListViewController: UIViewController {
         
         configureHierarchy()
         configureDataSource()
+        applyInitialSnapshots()
     }
-
+    
+//    override func setEditing(_ editing: Bool, animated: Bool) {
+//        super.setEditing(editing, animated: animated)
+//        self.collectionView.isEditing = editing
+//    }
 }
 
 extension ToDoListViewController {
@@ -35,17 +45,53 @@ extension ToDoListViewController {
     }
     
     func createLayout() -> UICollectionViewLayout {
-        let configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+        var configuration = UICollectionLayoutListConfiguration(appearance: .sidebar)
+        
+        // MARK: Cell削除のSwipeActionをTrailingに追加
+        configuration.trailingSwipeActionsConfigurationProvider = { [weak self ] indexPath in
+            guard let self = self else { return nil }
+            let selectedItem = self.dataSource.itemIdentifier(for: indexPath)
+            return self.deleteItemOnSwipe(item: selectedItem!)
+        }
+        
+        
         return UICollectionViewCompositionalLayout.list(using: configuration)
     }
     
+    // MARK: スワイプでセルを削除する関数
+    private func deleteItemOnSwipe(item: Item) -> UISwipeActionsConfiguration? {
+        let actionHandler: UIContextualAction.Handler = { action, view, completion in
+            
+            completion(true)
+            
+            var snapshot = self.dataSource.snapshot()
+            snapshot.deleteItems([item])
+            self.items = snapshot.itemIdentifiers
+            self.dataSource.apply(snapshot)
+        }
+        
+        let deleteAction = UIContextualAction(style: .normal, title: "Delete", handler: actionHandler)
+        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.backgroundColor = .red
+        
+        saveToDoTask()
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+    
     func configureDataSource() {
+        if let savedToDoTasks = loadToDoTask() {
+            todos = savedToDoTasks
+        } else {
+            loadSampleToDoTask()
+        }
+        
         let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Item>{ (cell, indexPath, item) in
             var contentConfiguration = cell.defaultContentConfiguration()
             contentConfiguration.text = "\(item.title)"
             cell.contentConfiguration = contentConfiguration
             
-            cell.accessories = [.multiselect(displayed: .always), .reorder(), .delete()]
+            cell.accessories = [.multiselect(displayed: .whenNotEditing), .outlineDisclosure()]
             
         }
         
@@ -53,39 +99,56 @@ extension ToDoListViewController {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
-        
-        dataSource.reorderingHandlers.canReorderItem = { item in return true }
-        
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.main])
-        
-        // MEMO: 構造体を使う時はインスタンスを作らないと参照できない
+    }
+    
+    func applyInitialSnapshots() {
+        var categorySnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
         for category in ToDo.Category.allCases {
-            let items = category.todos.map { Item(title: $0.task)}
-            snapshot.appendItems(items)
+            let categoryItem = Item(title: String(describing: category))
+            categorySnapshot.append([categoryItem])
+            let petItems = category.todos.map { Item(todo: $0, title: $0.task) }
+            categorySnapshot.append(petItems, to: categoryItem)
         }
-        dataSource.apply(snapshot, animatingDifferences: false)
+        dataSource.apply(categorySnapshot, to: .list1, animatingDifferences: false)
+    }
+
+}
+
+extension ToDoListViewController {
+    @IBAction func unwindToToDoView(sender: UIStoryboardSegue) {
+        if let ToDoViewController = sender.source as? ToDoViewController,
+           let todo = ToDoViewController.todo{
+            todos.append(todo)
+            saveToDoTask()
+            applyInitialSnapshots()
+        }
     }
 }
 
 extension ToDoListViewController {
     func saveToDoTask() {
-        let todoTask = textView.text
-        
-        userDefault.set(todoTask, forKey: "todoTask")
-        userDefault.synchronize()
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.keyEncodingStrategy = .convertToSnakeCase
+        guard let data = try? jsonEncoder.encode(todos) else {
+            return
+        }
+        userDefault.set(data, forKey: "todoTask")
     }
-    
+
     func loadToDoTask() -> [ToDo]? {
-        let value = userDefault.object(forKey: "todoTask")
-        guard let todos = value as? [ToDo] else {
+        let jsonDecoder = JSONDecoder()
+        jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+        guard let data = userDefault.data(forKey: "todoTask"),
+              let loadToDos = try? jsonDecoder.decode([ToDo].self, from: data) else {
             return nil
         }
-        return todos
+        return loadToDos
     }
-    
+
     func loadSampleToDoTask() {
-        
+        // MARK: 構造体を使う時はインスタンスを作らないと参照できない
+        for category in ToDo.Category.allCases {
+            todos += category.todos.map { ToDo(task: $0.task, category: $0.category)}
+        }
     }
 }
-
