@@ -81,7 +81,7 @@ extension ToDoListViewController {
     
     func configureDataSource() {
         if let savedToDoTasks = loadToDoTask() {
-            items = savedToDoTasks
+            todos = savedToDoTasks
         } else {
             loadSampleToDoTask()
         }
@@ -106,25 +106,25 @@ extension ToDoListViewController {
         for category in ToDo.Category.allCases {
             let categoryItem = Item(title: String(describing: category))
             categorySnapshot.append([categoryItem])
-            let todoItems = category.todos.map { Item(todo: $0, title: $0.task) }
+            let todoItems: [Item]
+            if category == .none {
+                todoItems = todos.map { Item(todo: $0, title: $0.task) }
+            } else if category == .done {
+                todoItems = todos.map { Item(todo: $0, title: $0.task) }
+            }
+            
             categorySnapshot.append(todoItems, to: categoryItem)
-//            categorySnapshot.append(items, to: categoryItem)
-//            var i = items.removeAll()
         }
         dataSource.apply(categorySnapshot, to: .list1, animatingDifferences: false)
     }
-    
-    func updateDataSouce(for item: Item) {
-        
-    }
+
 }
 
 extension ToDoListViewController {
     @IBAction func unwindToToDoView(sender: UIStoryboardSegue) {
         if let ToDoViewController = sender.source as? ToDoViewController,
            let todo = ToDoViewController.todo{
-            let item = Item(todo: todo, title: todo.task)
-            items.append(item)
+            todos.append(todo)
             saveToDoTask()
             applyInitialSnapshots()
         }
@@ -135,26 +135,26 @@ extension ToDoListViewController {
     func saveToDoTask() {
         let jsonEncoder = JSONEncoder()
         jsonEncoder.keyEncodingStrategy = .convertToSnakeCase
-        guard let data = try? jsonEncoder.encode(items) else {
+        guard let data = try? jsonEncoder.encode(todos) else {
             return
         }
         userDefault.set(data, forKey: "todoTask")
     }
 
-    func loadToDoTask() -> [Item]? {
+    func loadToDoTask() -> [ToDo]? {
         let jsonDecoder = JSONDecoder()
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
         guard let data = userDefault.data(forKey: "todoTask"),
-              let items = try? jsonDecoder.decode([Item].self, from: data) else {
+              let loadToDos = try? jsonDecoder.decode([ToDo].self, from: data) else {
             return nil
         }
-        return items
+        return loadToDos
     }
 
     func loadSampleToDoTask() {
         // MARK: 構造体を使う時はインスタンスを作らないと参照できない
         for category in ToDo.Category.allCases {
-            items += category.todos.map { Item(todo: $0, title: $0.task)}
+            todos += category.todos.map { ToDo(task: $0.task, category: $0.category)}
         }
     }
 }
