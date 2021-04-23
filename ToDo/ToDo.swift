@@ -9,7 +9,7 @@ import UIKit
 
 struct ToDo: Hashable {
     enum Category: Int, CaseIterable {
-        case sample
+        case none, done
     }
     let task: String
     let identifier = UUID()

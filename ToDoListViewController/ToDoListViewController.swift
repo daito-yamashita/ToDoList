@@ -9,18 +9,14 @@ import UIKit
 
 class ToDoListViewController: UIViewController, UICollectionViewDelegate {
 
-    enum Section {
-        case main, done
-    }
+    typealias Section = ToDo.Category
     
     var items = [Item]()
 
     let userDefault = UserDefaults.standard
     
     var collectionView: UICollectionView! = nil
-    lazy var dataSource = configureDataSource()
-
-    typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
+    lazy var dataSource = UICollectionViewDiffableDataSource<Section, Item>! = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,7 +75,7 @@ extension ToDoListViewController {
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
     
-    func configureDataSource() -> DataSource {
+    func configureDataSource() {
         if let savedToDoTasks = loadToDoTask() {
             items = savedToDoTasks
         } else {
@@ -91,28 +87,19 @@ extension ToDoListViewController {
             contentConfiguration.text = "\(item.title)"
             cell.contentConfiguration = contentConfiguration
             
-            cell.accessories = [.multiselect(displayed: .whenNotEditing), .reorder(displayed: .whenNotEditing)]
+            cell.accessories = [.multiselect(displayed: .whenNotEditing)]
             
         }
         
-        return DataSource(collectionView: collectionView) {
+        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, identifier: Item) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: identifier)
         }
     }
     
     func applyInitialSnapshots() {
-        // MARK: 並び替え処理
-        dataSource.reorderingHandlers.canReorderItem = { item in return true }
-//        dataSource.reorderingHandlers.didReorder = { [ weak self] transaction in
-//            guard let self = self else {
-//                return
-//            }
-//            self.items = 
-//        }
-        
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.main])
+        snapshot.appendSections(ToDo.Category.allCases)
         
         snapshot.appendItems(items)
         
