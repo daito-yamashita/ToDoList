@@ -9,9 +9,12 @@ import UIKit
 
 class ToDoListViewController: UIViewController, UICollectionViewDelegate {
 
-    typealias Section = ToDo.Category
+    enum Section: Int, CaseIterable, Hashable {
+        case list1, list2
+    }
     
     var items = [Item]()
+    var todos = [ToDo]()
 
     let userDefault = UserDefaults.standard
     
@@ -26,10 +29,10 @@ class ToDoListViewController: UIViewController, UICollectionViewDelegate {
         applyInitialSnapshots()
     }
     
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-        self.collectionView.isEditing = editing
-    }
+//    override func setEditing(_ editing: Bool, animated: Bool) {
+//        super.setEditing(editing, animated: animated)
+//        self.collectionView.isEditing = editing
+//    }
 }
 
 extension ToDoListViewController {
@@ -88,7 +91,7 @@ extension ToDoListViewController {
             contentConfiguration.text = "\(item.title)"
             cell.contentConfiguration = contentConfiguration
             
-            cell.accessories = [.multiselect(displayed: .whenNotEditing)]
+            cell.accessories = [.multiselect(displayed: .whenNotEditing), .outlineDisclosure()]
             
         }
         
@@ -99,12 +102,16 @@ extension ToDoListViewController {
     }
     
     func applyInitialSnapshots() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections(ToDo.Category.allCases)
-        
-        snapshot.appendItems(items)
-        
-        dataSource.apply(snapshot, animatingDifferences: false)
+        var categorySnapshot = NSDiffableDataSourceSectionSnapshot<Item>()
+        for category in ToDo.Category.allCases {
+            let categoryItem = Item(title: String(describing: category))
+            categorySnapshot.append([categoryItem])
+            let todoItems = category.todos.map { Item(todo: $0, title: $0.task) }
+            categorySnapshot.append(todoItems, to: categoryItem)
+//            categorySnapshot.append(items, to: categoryItem)
+//            var i = items.removeAll()
+        }
+        dataSource.apply(categorySnapshot, to: .list1, animatingDifferences: false)
     }
     
     func updateDataSouce(for item: Item) {
@@ -115,7 +122,8 @@ extension ToDoListViewController {
 extension ToDoListViewController {
     @IBAction func unwindToToDoView(sender: UIStoryboardSegue) {
         if let ToDoViewController = sender.source as? ToDoViewController,
-           let item = ToDoViewController.item {
+           let todo = ToDoViewController.todo{
+            let item = Item(todo: todo, title: todo.task)
             items.append(item)
             saveToDoTask()
             applyInitialSnapshots()
@@ -146,7 +154,7 @@ extension ToDoListViewController {
     func loadSampleToDoTask() {
         // MARK: 構造体を使う時はインスタンスを作らないと参照できない
         for category in ToDo.Category.allCases {
-            items = category.todos.map { Item(title: $0.task)}
+            items += category.todos.map { Item(todo: $0, title: $0.task)}
         }
     }
 }
