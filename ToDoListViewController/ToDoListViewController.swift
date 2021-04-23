@@ -16,12 +16,13 @@ class ToDoListViewController: UIViewController, UICollectionViewDelegate {
     let userDefault = UserDefaults.standard
     
     var collectionView: UICollectionView! = nil
-    lazy var dataSource = UICollectionViewDiffableDataSource<Section, Item>! = nil
+    var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureHierarchy()
+        configureDataSource()
         applyInitialSnapshots()
     }
     
@@ -66,11 +67,11 @@ extension ToDoListViewController {
             self.dataSource.apply(snapshot)
         }
         
-        saveToDoTask()
-        
         let deleteAction = UIContextualAction(style: .normal, title: "Delete", handler: actionHandler)
         deleteAction.image = UIImage(systemName: "trash")
         deleteAction.backgroundColor = .red
+        
+        saveToDoTask()
         
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
