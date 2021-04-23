@@ -64,10 +64,13 @@ extension ToDoListViewController {
             
             completion(true)
             
-            var snapShot = self.dataSource.snapshot()
-            snapShot.deleteItems([item])
-            self.dataSource.apply(snapShot)
+            var snapshot = self.dataSource.snapshot()
+            snapshot.deleteItems([item])
+            self.items = snapshot.itemIdentifiers
+            self.dataSource.apply(snapshot)
         }
+        
+        saveToDoTask()
         
         let deleteAction = UIContextualAction(style: .normal, title: "Delete", handler: actionHandler)
         deleteAction.image = UIImage(systemName: "trash")
@@ -101,11 +104,18 @@ extension ToDoListViewController {
     func applyInitialSnapshots() {
         // MARK: 並び替え処理
         dataSource.reorderingHandlers.canReorderItem = { item in return true }
+//        dataSource.reorderingHandlers.didReorder = { [ weak self] transaction in
+//            guard let self = self else {
+//                return
+//            }
+//            self.items = 
+//        }
         
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([.main])
         
         snapshot.appendItems(items)
+        
         dataSource.apply(snapshot, animatingDifferences: false)
     }
     
@@ -120,7 +130,7 @@ extension ToDoListViewController {
            let item = ToDoViewController.item {
             items.append(item)
             saveToDoTask()
-            updateDataSouce(for: item)
+            applyInitialSnapshots()
         }
     }
 }
